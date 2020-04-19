@@ -2,8 +2,10 @@ package me.itsjbey.hd;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
@@ -24,6 +26,7 @@ public class Main extends JavaPlugin {
 	double height = 4d;
 	double damage = 1d;
 	long timer = 1l;
+	ArrayList<World> worlds = new ArrayList<>();
 	
 	@Override
 	public void onEnable() {
@@ -66,6 +69,22 @@ public class Main extends JavaPlugin {
 				yml.set("height", 4d);
 				yml.set("damage", 1d);
 				yml.set("timer", 1l);
+				yml.set("worlds." + Bukkit.getWorlds().get(0).getName(), "true");
+				
+				int i = 0;
+				
+				for (World world : Bukkit.getWorlds()) {
+					
+					if(i == 0) {
+
+						i = 1;
+						
+						continue;
+					}
+					
+					yml.set("worlds." + world.getName(), "false");
+					
+				}
 				
 				yml.save(f);
 				
@@ -89,6 +108,22 @@ public class Main extends JavaPlugin {
 			damage = yml.getDouble("damage");
 			timer = yml.getLong("timer");
 			
+			System.out.println(yml.getConfigurationSection("worlds").getKeys(false).toString());
+			
+			worlds.clear();
+			
+			for (String s : yml.getConfigurationSection("worlds").getKeys(true)) {
+				
+				System.out.println(s);
+				
+				if(yml.getBoolean("worlds." + s)) {
+					
+					worlds.add(Bukkit.getWorld(s));
+					
+				}
+				
+			}
+			
 		} else {
 			
 			height = 4d;
@@ -97,7 +132,7 @@ public class Main extends JavaPlugin {
 			
 		}
 		
-		heighttest = new TASK_HeightTest(height, damage).runTaskTimer(this, 0, timer);
+		heighttest = new TASK_HeightTest(height, damage, worlds).runTaskTimer(this, 0, timer);
 		
 	}
 	
