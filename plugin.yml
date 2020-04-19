@@ -1,0 +1,6 @@
+name: HeightDamager
+author: ItsJBey
+version: 1.0
+main: me.itsjbey.hd.Main
+commands:
+  hd:
